@@ -8,8 +8,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="InfrastructureInterfaces\" />
-      <Folder Include="Services\" />
+      <ProjectReference Include="..\Urbancode.Accounts.API.Domain\Urbancode.Accounts.API.Domain.csproj" />
     </ItemGroup>
 
 </Project>
