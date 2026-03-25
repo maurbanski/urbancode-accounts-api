@@ -1,17 +1,21 @@
 using Microsoft.AspNetCore.Mvc;
 using Urbancode.Accounts.API.Interface.Requests;
+using Urbancode.Accounts.API.Logic.DTOs;
+using Urbancode.Accounts.API.Logic.Services;
 
 namespace Urbancode.Accounts.API.Interface.Controllers;
 
 [ApiController]
 [Route("roles")]
-public class RolesController : ControllerBase
+public class RolesController : ApiControllerBase
 {
     private readonly ILogger<RolesController> _logger;
+    private readonly RolesService _rolesService;
     
-    public RolesController(ILogger<RolesController> logger)
+    public RolesController(ILogger<RolesController> logger, RolesService rolesService)
     {
         _logger = logger;
+        _rolesService = rolesService;
     }
 
     [HttpGet]
@@ -19,28 +23,31 @@ public class RolesController : ControllerBase
     {
         try
         {
-            throw new NotImplementedException();
+            var rolesResult = await _rolesService.GetRoles();
+            if (rolesResult.IsSuccess) return Ok(rolesResult.Value);
+            else return base.GetErrorActionResult(rolesResult.Error);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, ex.Message);
-            return BadRequest();
+            return StatusCode(500);
         }
     }
 
-    [HttpGet("{id}")]
+    [HttpGet("{id:guid}")]
     public async Task<IActionResult> Get(Guid id)
     {
         try
         {
-            throw new NotImplementedException();
+            var roleResult = await _rolesService.GetRole(id);
+            if (roleResult.IsSuccess) return Ok(roleResult.Value);
+            else return base.GetErrorActionResult(roleResult.Error);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, ex.Message);
-            return BadRequest();
+            return StatusCode(500);
         }
-
     }
 
     [HttpPost]
@@ -48,29 +55,42 @@ public class RolesController : ControllerBase
     {
         try
         {
-            throw new NotImplementedException();
+            var dto = new RoleCreateDTO()
+            {
+                Name = request.Name
+            };
+            
+            var result = await _rolesService.CreateRole(dto);
+            if (result.IsSuccess) return Ok(result.Value);
+            else return base.GetErrorActionResult(result.Error);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, ex.Message);
-            return BadRequest();
+            return StatusCode(500);
         }
-
     }
 
-    [HttpPost("{id}")]
+    [HttpPost("{id:guid}")]
     public async Task<IActionResult> Post(Guid id, [FromBody] RoleUpdateRequest request)
     {
         try
         {
-            throw new NotImplementedException();
+            var dto = new RoleUpdateDTO()
+            {
+                Id = id,
+                Name = request.Name
+            };
+            
+            var result = await _rolesService.UpdateRole(dto);
+            if (result.IsSuccess) return Ok(result);
+            else return base.GetErrorActionResult(result.Error);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, ex.Message);
-            return BadRequest();
+            return StatusCode(500);
         }
-
     }
 
     [HttpDelete("{id}")]
@@ -78,13 +98,14 @@ public class RolesController : ControllerBase
     {
         try
         {
-            throw new NotImplementedException();
+            var result = await _rolesService.DeleteRole(id);
+            if (result.IsSuccess) return Ok(result);
+            else return base.GetErrorActionResult(result.Error);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, ex.Message);
-            return BadRequest();
+            return StatusCode(500);
         }
-
     }
 }

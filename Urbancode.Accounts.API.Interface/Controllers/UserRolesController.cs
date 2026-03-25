@@ -1,30 +1,35 @@
 using Microsoft.AspNetCore.Mvc;
 using Urbancode.Accounts.API.Interface.Requests;
+using Urbancode.Accounts.API.Logic.Services;
 
 namespace Urbancode.Accounts.API.Interface.Controllers;
 
 [ApiController]
-[Route("users/{id}/roles")]
-public class UserRolesController : ControllerBase
+[Route("users/{id:guid}/roles")]
+public class UserRolesController : ApiControllerBase
 {
     private readonly ILogger<UserRolesController> _logger;
+    private readonly UserRolesService _userRolesService;
     
-    public UserRolesController(ILogger<UserRolesController> logger)
+    public UserRolesController(ILogger<UserRolesController> logger, UserRolesService userRolesService)
     {
         _logger = logger;
+        _userRolesService = userRolesService;
     }
 
     [HttpGet]
-    public async Task<IActionResult> Get()
+    public async Task<IActionResult> Get(Guid id)
     {
         try
         {
-            throw new NotImplementedException();
+            var userRolesResult = await _userRolesService.GetUserRoles(id);
+            if (userRolesResult.IsSuccess) return Ok(userRolesResult.Value);
+            else return base.GetErrorActionResult(userRolesResult.Error);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, ex.Message);
-            return BadRequest();
+            return StatusCode(500);
         }
     }
 }

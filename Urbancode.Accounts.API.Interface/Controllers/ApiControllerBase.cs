@@ -1,0 +1,18 @@
+using Microsoft.AspNetCore.Mvc;
+using Urbancode.Accounts.API.Domain.ErrorHandling;
+
+namespace Urbancode.Accounts.API.Interface.Controllers;
+
+public class ApiControllerBase : ControllerBase
+{
+    public IActionResult GetErrorActionResult(Error error)
+    {
+        return error.Type switch
+        {
+            ErrorType.NotFound => NotFound(error.MessageShort),
+            ErrorType.Conflict => Conflict(error.MessageShort),
+            ErrorType.Unauthorised => Forbid(error.MessageShort),
+            ErrorType.Validation => BadRequest(error.MessageShort)
+        };
+    }
+}

@@ -4,8 +4,8 @@ using Urbancode.Accounts.API.Logic.Services;
 namespace Urbancode.Accounts.API.Interface.Controllers;
 
 [ApiController]
-[Route("roles/{id}/members")]
-public class RoleMembersController : ControllerBase
+[Route("roles/{id:guid}/members")]
+public class RoleMembersController : ApiControllerBase
 {
     private readonly ILogger<RoleMembersController> _logger;
     private readonly RoleMembersService _roleMembersService;
@@ -19,7 +19,17 @@ public class RoleMembersController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> Get(Guid id)
     {
-        var a = _roleMembersService.GetRoleMembers().
+        try
+        {
+            var membersResult = await _roleMembersService.GetRoleMembers(id);
+            if (membersResult.IsSuccess) return Ok(membersResult.Value);
+            else return base.GetErrorActionResult(membersResult.Error);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, ex.Message);
+            return StatusCode(500);
+        }
     }
 
     [HttpGet("count")]
@@ -27,40 +37,46 @@ public class RoleMembersController : ControllerBase
     {
         try
         {
-            throw new NotImplementedException();
+            var membersResult = await _roleMembersService.GetRoleMembers(id);
+            if (membersResult.IsSuccess) return Ok(membersResult.Value.Count);
+            else return base.GetErrorActionResult(membersResult.Error);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, ex.Message);
-            return BadRequest();
+            return StatusCode(500);
         }
     }
     
     [HttpPost]
-    public async Task<IActionResult> Post(Guid id)
+    public async Task<IActionResult> Post(Guid id, Guid userId)
     {
         try
         {
-            throw new NotImplementedException();
+            var result = await _roleMembersService.AddRoleMember(id, userId);
+            if (result.IsSuccess) return Ok(result);
+            else return base.GetErrorActionResult(result.Error);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, ex.Message);
-            return BadRequest();
+            return StatusCode(500);
         }
     }
     
     [HttpDelete]
-    public async Task<IActionResult> Delete(Guid id)
+    public async Task<IActionResult> Delete(Guid id, Guid userId)
     {
         try
         {
-            throw new NotImplementedException();
+            var result = await _roleMembersService.RemoveRoleMember(id, userId);
+            if (result.IsSuccess) return Ok(result);
+            else return base.GetErrorActionResult(result.Error);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, ex.Message);
-            return BadRequest();
+            return StatusCode(500);
         }
     }
 }

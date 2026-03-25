@@ -14,9 +14,10 @@ public class UsersService
         _usersRepository = usersRepository;
     }
 
-    public async Task<IList<User>> GetUsers()
+    public async Task<Result<IList<User>>> GetUsers()
     {
-        return await _usersRepository.GetUsers();
+        var users = await _usersRepository.GetUsers();
+        return new(users);
     }
 
     public async Task<Result<User>> GetUser(Guid id)

@@ -7,7 +7,7 @@ namespace Urbancode.Accounts.API.Interface.Controllers;
 
 [ApiController]
 [Route("users")]
-public class UsersController : ControllerBase
+public class UsersController : ApiControllerBase
 {
     private readonly ILogger<UsersController> _logger;
     private readonly UsersService _usersService;
@@ -23,13 +23,9 @@ public class UsersController : ControllerBase
     {
         try
         {
-            var users = await _usersService.GetUsers();
-            return Ok(users);
-        }
-        catch (ArgumentException ex)
-        {
-            _logger.LogError(ex, ex.Message);
-            return BadRequest();
+            var usersResult = await _usersService.GetUsers();
+            if (usersResult.IsSuccess) return Ok(usersResult.Value);
+            else return base.GetErrorActionResult(usersResult.Error);
         }
         catch (Exception ex)
         {
@@ -38,18 +34,14 @@ public class UsersController : ControllerBase
         }
     }
 
-    [HttpGet("{id}")]
+    [HttpGet("{id:guid}")]
     public async Task<IActionResult> Get(Guid id)
     {
         try
         {
-            var user = await _usersService.GetUser(id);
-            return Ok(user);
-        }
-        catch (ArgumentException ex)
-        {
-            _logger.LogError(ex, ex.Message);
-            return BadRequest();
+            var userResult = await _usersService.GetUser(id);
+            if (userResult.IsSuccess) return Ok(userResult.Value);
+            else return base.GetErrorActionResult(userResult.Error);
         }
         catch (Exception ex)
         {
@@ -63,13 +55,9 @@ public class UsersController : ControllerBase
     {
         try
         {
-            var user = await _usersService.GetUser(email);
-            return Ok(user);
-        }
-        catch (ArgumentException ex)
-        {
-            _logger.LogError(ex, ex.Message);
-            return BadRequest();
+            var userResult = await _usersService.GetUser(email);
+            if (userResult.IsSuccess) return Ok(userResult.Value);
+            else return base.GetErrorActionResult(userResult.Error);
         }
         catch (Exception ex)
         {
@@ -83,20 +71,16 @@ public class UsersController : ControllerBase
     {
         try
         {
-            var userCreateDto = new UserCreateDTO
+            var dto = new UserCreateDTO()
             {
                 Id = request.Id,
                 Email = request.Email,
                 Name = request.Name
             };
 
-            await _usersService.CreateUser(userCreateDto);
-            return Ok();
-        }
-        catch (ArgumentException ex)
-        {
-            _logger.LogError(ex, ex.Message);
-            return BadRequest();
+            var result = await _usersService.CreateUser(dto);
+            if (result.IsSuccess) return Ok();
+            else return base.GetErrorActionResult(result.Error);
         }
         catch (Exception ex)
         {
@@ -110,7 +94,7 @@ public class UsersController : ControllerBase
     {
         try
         {
-            var userUpdateDto = new UserUpdateDTO()
+            var dto = new UserUpdateDTO()
             {
                 Id = id,
                 Email = request.Email,
@@ -118,13 +102,9 @@ public class UsersController : ControllerBase
                 Active = request.Active
             };
 
-            await _usersService.UpdateUser(userUpdateDto);
-            return Ok();
-        }
-        catch (ArgumentException ex)
-        {
-            _logger.LogError(ex, ex.Message);
-            return BadRequest();
+            var result = await _usersService.UpdateUser(dto);
+            if (result.IsSuccess) return Ok();
+            else return base.GetErrorActionResult(result.Error);
         }
         catch (Exception ex)
         {
@@ -138,13 +118,9 @@ public class UsersController : ControllerBase
     {
         try
         {
-            await _usersService.DeleteUser(id);
-            return Ok();
-        }
-        catch (ArgumentException ex)
-        {
-            _logger.LogError(ex, ex.Message);
-            return BadRequest();
+            var userResult = await _usersService.DeleteUser(id);
+            if (userResult.IsSuccess) return Ok();
+            else return base.GetErrorActionResult(userResult.Error);
         }
         catch (Exception ex)
         {
