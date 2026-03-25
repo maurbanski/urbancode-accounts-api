@@ -1,4 +1,5 @@
 using Urbancode.Accounts.API.Domain;
+using Urbancode.Accounts.API.Domain.ErrorHandling;
 using Urbancode.Accounts.API.Logic.DTOs;
 using Urbancode.Accounts.API.Logic.Interfaces;
 
@@ -18,26 +19,26 @@ public class UsersService
         return await _usersRepository.GetUsers();
     }
 
-    public async Task<User> GetUser(Guid id)
+    public async Task<Result<User>> GetUser(Guid id)
     {
         var user = await _usersRepository.GetUser(id);
-        if (user == null) throw new ArgumentException($"User with this Id not found (Id: {id})");
+        if (user == null) return CommonErrors.UserNotFoundError(id);
 
         return user;
     }
 
-    public async Task<User> GetUser(string email)
+    public async Task<Result<User>> GetUser(string email)
     {
         var user = await _usersRepository.GetUser(email);
-        if (user == null) throw new ArgumentException($"User with this email not found (Email: {email})");
+        if (user == null) return CommonErrors.UserNotFoundError(email);
 
         return user;
     }
 
-    public async Task CreateUser(UserCreateDTO dto)
+    public async Task<Result> CreateUser(UserCreateDTO dto)
     {
-        var userWithThisEmail = await GetUser(dto.Email);
-        if (userWithThisEmail != null) throw new ArgumentException($"User with this email already exists (email: {dto.Email})");
+        var userWithThisEmail = await _usersRepository.GetUser(dto.Email);
+        if (userWithThisEmail != null) return CommonErrors.UserAlreadyExistsError(dto.Email);
         
         var user = new User
         {
@@ -48,17 +49,18 @@ public class UsersService
         };
 
         await _usersRepository.CreateUser(user);
+        return Result.Success();
     }
 
-    public async Task UpdateUser(UserUpdateDTO dto)
+    public async Task<Result> UpdateUser(UserUpdateDTO dto)
     {
-        var existingUser = await GetUser(dto.Id);
-        if (existingUser == null) throw new ArgumentException($"User with this Id not found (Id: {dto.Id})");
+        var existingUser = await _usersRepository.GetUser(dto.Id);
+        if (existingUser == null) return CommonErrors.UserNotFoundError(dto.Id);
 
         if (dto.Email != existingUser.Email)
         {
-            var userWithThisEmail = await GetUser(dto.Email);
-            if (userWithThisEmail != null) throw new ArgumentException($"User with this email already exists (email: {dto.Email})");
+            var userWithThisEmail = await _usersRepository.GetUser(dto.Email);
+            if (userWithThisEmail != null) return CommonErrors.UserAlreadyExistsError(dto.Email);
         }
         
         var user = new User
@@ -69,13 +71,15 @@ public class UsersService
         };
 
         await _usersRepository.UpdateUser(user);
+        return Result.Success();
     }
 
-    public async Task DeleteUser(Guid id)
+    public async Task<Result> DeleteUser(Guid id)
     {
-        var existingUser = await GetUser(id);
-        if (existingUser == null) throw new ArgumentException($"User with this Id not found (Id: {id})");
+        var existingUser = await _usersRepository.GetUser(id);
+        if (existingUser == null) return CommonErrors.UserNotFoundError(id);
 
         await _usersRepository.DeleteUser(id);
+        return Result.Success();
     }
 }

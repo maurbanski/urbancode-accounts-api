@@ -1,4 +1,5 @@
 using Urbancode.Accounts.API.Domain;
+using Urbancode.Accounts.API.Domain.ErrorHandling;
 using Urbancode.Accounts.API.Logic.DTOs;
 using Urbancode.Accounts.API.Logic.Interfaces;
 
@@ -13,31 +14,32 @@ public class RolesService
         _rolesRepository = rolesRepository;
     }
 
-    public async Task<IList<Role>> GetRoles()
+    public async Task<Result<IList<Role>>> GetRoles()
     {
-        return await _rolesRepository.GetRoles();
+        var roles = await _rolesRepository.GetRoles();
+        return new(roles);
     }
 
-    public async Task<Role> GetRole(Guid id)
+    public async Task<Result<Role>> GetRole(Guid id)
     {
         var role = await _rolesRepository.GetRole(id);
-        if (role == null) throw new ArgumentException($"Role with this Id not found (Id: {id})");
+        if (role == null) return CommonErrors.RoleNotFoundError(id);
 
         return role;
     }
     
-    public async Task<Role> GetRole(string name)
+    public async Task<Result<Role>> GetRole(string name)
     {
         var role = await _rolesRepository.GetRole(name);
-        if (role == null) throw new ArgumentException($"Role with this name not found (Name: {name})");
+        if (role == null) return CommonErrors.RoleNotFoundError(name);
 
         return role;
     }
 
-    public async Task<Guid> CreateRole(RoleCreateDTO dto)
+    public async Task<Result<Guid>> CreateRole(RoleCreateDTO dto)
     {
-        var roleWithThisName = await GetRole(dto.Name);
-        if (roleWithThisName != null) throw new ArgumentException($"Role with this name already exists (Name: {dto.Name})");
+        var roleWithThisName = await _rolesRepository.GetRole(dto.Name);
+        if (roleWithThisName != null) return CommonErrors.RoleAlreadyExistsError(dto.Name);
 
         var role = new Role
         {
@@ -50,14 +52,13 @@ public class RolesService
         return id;
     }
 
-    public async Task UpdateRole(RoleUpdateDTO dto)
+    public async Task<Result> UpdateRole(RoleUpdateDTO dto)
     {
-        var existingRole = await GetRole(dto.Id);
-        if (existingRole == null) throw new ArgumentException($"Role with this Id not found (Id: {dto.Id})");
+        var existingRole = await _rolesRepository.GetRole(dto.Id);
+        if (existingRole == null) return CommonErrors.RoleNotFoundError(dto.Id);
         
-        var roleWithThisName = await GetRole(dto.Name);
-        if (roleWithThisName != null)
-            throw new ArgumentException($"Role with this name already exists (Name: {dto.Name})");
+        var roleWithThisName = await _rolesRepository.GetRole(dto.Name);
+        if (roleWithThisName != null) return CommonErrors.RoleAlreadyExistsError(dto.Name);
 
         var role = new Role
         {
@@ -67,14 +68,16 @@ public class RolesService
         };
 
         await _rolesRepository.UpdateRole(role);
+        return Result.Success();
     }
 
-    public async Task DeleteRole(Guid id)
+    public async Task<Result> DeleteRole(Guid id)
     {
         var existingRole = await GetRole(id);
-        if (existingRole == null) throw new ArgumentException($"Role with this Id not found (Id: {id})");
+        if (existingRole == null) return CommonErrors.RoleNotFoundError(id);
 
         await _rolesRepository.DeleteRole(id);
+        return Result.Success();
     }
 
 }

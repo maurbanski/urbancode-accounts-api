@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Urbancode.Accounts.API.Interface.Requests;
+using Urbancode.Accounts.API.Logic.DTOs;
+using Urbancode.Accounts.API.Logic.Services;
 
 namespace Urbancode.Accounts.API.Interface.Controllers;
 
@@ -8,10 +10,12 @@ namespace Urbancode.Accounts.API.Interface.Controllers;
 public class UsersController : ControllerBase
 {
     private readonly ILogger<UsersController> _logger;
+    private readonly UsersService _usersService;
     
-    public UsersController(ILogger<UsersController> logger)
+    public UsersController(ILogger<UsersController> logger, UsersService usersService)
     {
         _logger = logger;
+        _usersService = usersService;
     }
 
     [HttpGet]
@@ -19,12 +23,18 @@ public class UsersController : ControllerBase
     {
         try
         {
-            throw new NotImplementedException();
+            var users = await _usersService.GetUsers();
+            return Ok(users);
+        }
+        catch (ArgumentException ex)
+        {
+            _logger.LogError(ex, ex.Message);
+            return BadRequest();
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, ex.Message);
-            return BadRequest();
+            return StatusCode(500);
         }
     }
 
@@ -33,12 +43,18 @@ public class UsersController : ControllerBase
     {
         try
         {
-            throw new NotImplementedException();
+            var user = await _usersService.GetUser(id);
+            return Ok(user);
+        }
+        catch (ArgumentException ex)
+        {
+            _logger.LogError(ex, ex.Message);
+            return BadRequest();
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, ex.Message);
-            return BadRequest();
+            return StatusCode(500);
         }
     }
 
@@ -47,12 +63,18 @@ public class UsersController : ControllerBase
     {
         try
         {
-            throw new NotImplementedException();
+            var user = await _usersService.GetUser(email);
+            return Ok(user);
+        }
+        catch (ArgumentException ex)
+        {
+            _logger.LogError(ex, ex.Message);
+            return BadRequest();
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, ex.Message);
-            return BadRequest();
+            return StatusCode(500);
         }
     }
 
@@ -61,14 +83,26 @@ public class UsersController : ControllerBase
     {
         try
         {
-            throw new NotImplementedException();
+            var userCreateDto = new UserCreateDTO
+            {
+                Id = request.Id,
+                Email = request.Email,
+                Name = request.Name
+            };
+
+            await _usersService.CreateUser(userCreateDto);
+            return Ok();
         }
-        catch (Exception ex)
+        catch (ArgumentException ex)
         {
             _logger.LogError(ex, ex.Message);
             return BadRequest();
         }
-
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, ex.Message);
+            return StatusCode(500);
+        }
     }
 
     [HttpPost("{id}")]
@@ -76,14 +110,27 @@ public class UsersController : ControllerBase
     {
         try
         {
-            throw new NotImplementedException();
+            var userUpdateDto = new UserUpdateDTO()
+            {
+                Id = id,
+                Email = request.Email,
+                Name = request.Name,
+                Active = request.Active
+            };
+
+            await _usersService.UpdateUser(userUpdateDto);
+            return Ok();
         }
-        catch (Exception ex)
+        catch (ArgumentException ex)
         {
             _logger.LogError(ex, ex.Message);
             return BadRequest();
         }
-
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, ex.Message);
+            return StatusCode(500);
+        }
     }
 
     [HttpDelete("{id}")]
@@ -91,13 +138,18 @@ public class UsersController : ControllerBase
     {
         try
         {
-            throw new NotImplementedException();
+            await _usersService.DeleteUser(id);
+            return Ok();
         }
-        catch (Exception ex)
+        catch (ArgumentException ex)
         {
             _logger.LogError(ex, ex.Message);
             return BadRequest();
         }
-
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, ex.Message);
+            return StatusCode(500);
+        }
     }
 }

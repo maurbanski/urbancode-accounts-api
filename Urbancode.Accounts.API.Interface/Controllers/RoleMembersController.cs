@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Urbancode.Accounts.API.Logic.Services;
 
 namespace Urbancode.Accounts.API.Interface.Controllers;
 
@@ -7,28 +8,22 @@ namespace Urbancode.Accounts.API.Interface.Controllers;
 public class RoleMembersController : ControllerBase
 {
     private readonly ILogger<RoleMembersController> _logger;
+    private readonly RoleMembersService _roleMembersService;
     
-    public RoleMembersController(ILogger<RoleMembersController> logger)
+    public RoleMembersController(ILogger<RoleMembersController> logger, RoleMembersService roleMembersService)
     {
         _logger = logger;
+        _roleMembersService = roleMembersService;
     }
 
     [HttpGet]
-    public async Task<IActionResult> Get()
+    public async Task<IActionResult> Get(Guid id)
     {
-        try
-        {
-            throw new NotImplementedException();
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, ex.Message);
-            return BadRequest();
-        }
+        var a = _roleMembersService.GetRoleMembers().
     }
 
     [HttpGet("count")]
-    public async Task<IActionResult> Count()
+    public async Task<IActionResult> Count(Guid id)
     {
         try
         {
@@ -42,7 +37,7 @@ public class RoleMembersController : ControllerBase
     }
     
     [HttpPost]
-    public async Task<IActionResult> Post()
+    public async Task<IActionResult> Post(Guid id)
     {
         try
         {
@@ -56,7 +51,7 @@ public class RoleMembersController : ControllerBase
     }
     
     [HttpDelete]
-    public async Task<IActionResult> Delete()
+    public async Task<IActionResult> Delete(Guid id)
     {
         try
         {
