@@ -2,6 +2,7 @@ using Urbancode.Accounts.API.Domain;
 using Urbancode.Accounts.API.Domain.ErrorHandling;
 using Urbancode.Accounts.API.Logic.DTOs;
 using Urbancode.Accounts.API.Logic.Interfaces;
+using Urbancode.Accounts.API.Logic.Validators;
 
 namespace Urbancode.Accounts.API.Logic.Services;
 
@@ -30,6 +31,8 @@ public class RolesService
     
     public async Task<Result<Role>> GetRole(string name)
     {
+        if (!RoleNameValidator.ValidateRoleName(name)) return CommonErrors.InvalidRoleNameError(name);
+        
         var role = await _rolesRepository.GetRole(name);
         if (role == null) return CommonErrors.RoleNotFoundError(name);
 
@@ -38,8 +41,8 @@ public class RolesService
 
     public async Task<Result<Guid>> CreateRole(RoleCreateDTO dto)
     {
-        var roleWithThisName = await _rolesRepository.GetRole(dto.Name);
-        if (roleWithThisName != null) return CommonErrors.RoleAlreadyExistsError(dto.Name);
+        if (!RoleNameValidator.ValidateRoleName(dto.Name)) return CommonErrors.InvalidRoleNameError(dto.Name);
+        if (!(await CheckRoleNameAvailable(dto.Name))) return CommonErrors.RoleAlreadyExistsError(dto.Name);
 
         var role = new Role
         {
@@ -54,11 +57,11 @@ public class RolesService
 
     public async Task<Result> UpdateRole(RoleUpdateDTO dto)
     {
+        if (!RoleNameValidator.ValidateRoleName(dto.Name)) return CommonErrors.InvalidRoleNameError(dto.Name);
+        
         var existingRole = await _rolesRepository.GetRole(dto.Id);
         if (existingRole == null) return CommonErrors.RoleNotFoundError(dto.Id);
-        
-        var roleWithThisName = await _rolesRepository.GetRole(dto.Name);
-        if (roleWithThisName != null) return CommonErrors.RoleAlreadyExistsError(dto.Name);
+        if (!(await CheckRoleNameAvailable(dto.Name))) return CommonErrors.RoleAlreadyExistsError(dto.Name);
 
         var role = new Role
         {
@@ -78,6 +81,12 @@ public class RolesService
 
         await _rolesRepository.DeleteRole(id);
         return Result.Success();
+    }
+
+    private async Task<bool> CheckRoleNameAvailable(string name)
+    {
+        var roleWithThisName = await _rolesRepository.GetRole(name);
+        return roleWithThisName == null;
     }
 
 }

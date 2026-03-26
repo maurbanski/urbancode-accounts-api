@@ -31,4 +31,24 @@ public static class CommonErrors
         new Error(ErrorType.Conflict,
             "User already exists",
             $"User with this email already exists (Email: {email})");
+
+    public static Error UserAlreadyExistsError(Guid id) =>
+        new Error(ErrorType.Conflict,
+            "User already exists",
+            $"User with this Id already exists (Id: {id})");
+    
+    public static Error InvalidEmailError(string email) =>
+        new Error(ErrorType.Validation,
+            "Email is not a valid email",
+            $"Email is not a valid email (Email: {email})");
+
+    public static Error InvalidUserNameError(string name) =>
+        new Error(ErrorType.Validation,
+            "User name is not valid",
+            $"User name is not valid (Name: {name})");
+    
+    public static Error InvalidRoleNameError(string name) =>
+        new Error(ErrorType.Validation,
+            "Role name is not valid",
+            $"Role name is not valid (Name: {name})");
 }

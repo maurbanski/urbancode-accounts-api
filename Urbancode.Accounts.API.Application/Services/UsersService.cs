@@ -2,6 +2,7 @@ using Urbancode.Accounts.API.Domain;
 using Urbancode.Accounts.API.Domain.ErrorHandling;
 using Urbancode.Accounts.API.Logic.DTOs;
 using Urbancode.Accounts.API.Logic.Interfaces;
+using Urbancode.Accounts.API.Logic.Validators;
 
 namespace Urbancode.Accounts.API.Logic.Services;
 
@@ -30,6 +31,8 @@ public class UsersService
 
     public async Task<Result<User>> GetUser(string email)
     {
+        if (!EmailValidator.ValidateEmail(email)) return CommonErrors.InvalidEmailError(email);
+        
         var user = await _usersRepository.GetUser(email);
         if (user == null) return CommonErrors.UserNotFoundError(email);
 
@@ -38,8 +41,11 @@ public class UsersService
 
     public async Task<Result> CreateUser(UserCreateDTO dto)
     {
-        var userWithThisEmail = await _usersRepository.GetUser(dto.Email);
-        if (userWithThisEmail != null) return CommonErrors.UserAlreadyExistsError(dto.Email);
+        if (!EmailValidator.ValidateEmail(dto.Email)) return CommonErrors.InvalidEmailError(dto.Email);
+        if (!UserNameValidator.ValidateUserName(dto.Name)) return CommonErrors.InvalidUserNameError(dto.Name);
+
+        if (!(await CheckIdAvailable(dto.Id))) return CommonErrors.UserAlreadyExistsError(dto.Id);
+        if (!(await CheckEmailAvailable(dto.Email))) return CommonErrors.UserAlreadyExistsError(dto.Email);
         
         var user = new User
         {
@@ -55,14 +61,12 @@ public class UsersService
 
     public async Task<Result> UpdateUser(UserUpdateDTO dto)
     {
+        if (!EmailValidator.ValidateEmail(dto.Email)) return CommonErrors.InvalidEmailError(dto.Email);
+        if (!UserNameValidator.ValidateUserName(dto.Name)) return CommonErrors.InvalidUserNameError(dto.Name);
+
         var existingUser = await _usersRepository.GetUser(dto.Id);
         if (existingUser == null) return CommonErrors.UserNotFoundError(dto.Id);
-
-        if (dto.Email != existingUser.Email)
-        {
-            var userWithThisEmail = await _usersRepository.GetUser(dto.Email);
-            if (userWithThisEmail != null) return CommonErrors.UserAlreadyExistsError(dto.Email);
-        }
+        if (dto.Email != existingUser.Email && !(await CheckEmailAvailable(dto.Email))) return CommonErrors.UserAlreadyExistsError(dto.Email);
         
         var user = new User
         {
@@ -82,5 +86,17 @@ public class UsersService
 
         await _usersRepository.DeleteUser(id);
         return Result.Success();
+    }
+
+    private async Task<bool> CheckEmailAvailable(string email)
+    {
+        var userWithThisEmail = await _usersRepository.GetUser(email);
+        return (userWithThisEmail == null);
+    }
+
+    private async Task<bool> CheckIdAvailable(Guid id)
+    {
+        var userWithThisId = await _usersRepository.GetUser(id);
+        return (userWithThisId == null);
     }
 }
