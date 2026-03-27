@@ -7,8 +7,22 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="DBContexts\" />
-      <Folder Include="Repositories\" />
+      <PackageReference Include="Dapper" Version="2.1.72" />
+      <PackageReference Include="Microsoft.Extensions.Configuration" Version="11.0.0-preview.2.26159.112" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Reference Include="Npgsql">
+        <HintPath>..\..\..\.nuget\packages\npgsql\10.0.1\lib\net8.0\Npgsql.dll</HintPath>
+      </Reference>
+      <Reference Include="System.Data.SqlClient">
+        <HintPath>..\..\..\.nuget\packages\system.data.sqlclient\4.9.0\lib\net8.0\System.Data.SqlClient.dll</HintPath>
+      </Reference>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Urbancode.Accounts.API.Application\Urbancode.Accounts.API.Application.csproj" />
+      <ProjectReference Include="..\Urbancode.Accounts.API.Domain\Urbancode.Accounts.API.Domain.csproj" />
     </ItemGroup>
 
 </Project>
