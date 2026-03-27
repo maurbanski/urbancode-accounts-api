@@ -23,7 +23,7 @@ public class RoleMembersController : ApiControllerBase
         {
             var membersResult = await _roleMembersService.GetRoleMembers(id);
             if (membersResult.IsSuccess) return Ok(membersResult.Value);
-            else return base.GetErrorActionResult(membersResult.Error);
+            else return base.HandleError(membersResult.Error);
         }
         catch (Exception ex)
         {
@@ -39,7 +39,7 @@ public class RoleMembersController : ApiControllerBase
         {
             var membersResult = await _roleMembersService.GetRoleMembers(id);
             if (membersResult.IsSuccess) return Ok(membersResult.Value.Count);
-            else return base.GetErrorActionResult(membersResult.Error);
+            else return base.HandleError(membersResult.Error);
         }
         catch (Exception ex)
         {
@@ -55,7 +55,7 @@ public class RoleMembersController : ApiControllerBase
         {
             var result = await _roleMembersService.AddRoleMember(id, userId);
             if (result.IsSuccess) return Ok(result);
-            else return base.GetErrorActionResult(result.Error);
+            else return base.HandleError(result.Error);
         }
         catch (Exception ex)
         {
@@ -71,7 +71,7 @@ public class RoleMembersController : ApiControllerBase
         {
             var result = await _roleMembersService.RemoveRoleMember(id, userId);
             if (result.IsSuccess) return Ok(result);
-            else return base.GetErrorActionResult(result.Error);
+            else return base.HandleError(result.Error);
         }
         catch (Exception ex)
         {

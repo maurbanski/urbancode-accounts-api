@@ -25,7 +25,7 @@ public class RolesController : ApiControllerBase
         {
             var rolesResult = await _rolesService.GetRoles();
             if (rolesResult.IsSuccess) return Ok(rolesResult.Value);
-            else return base.GetErrorActionResult(rolesResult.Error);
+            else return base.HandleError(rolesResult.Error);
         }
         catch (Exception ex)
         {
@@ -41,7 +41,7 @@ public class RolesController : ApiControllerBase
         {
             var roleResult = await _rolesService.GetRole(id);
             if (roleResult.IsSuccess) return Ok(roleResult.Value);
-            else return base.GetErrorActionResult(roleResult.Error);
+            else return base.HandleError(roleResult.Error);
         }
         catch (Exception ex)
         {
@@ -62,7 +62,7 @@ public class RolesController : ApiControllerBase
             
             var result = await _rolesService.CreateRole(dto);
             if (result.IsSuccess) return Ok(result.Value);
-            else return base.GetErrorActionResult(result.Error);
+            else return base.HandleError(result.Error);
         }
         catch (Exception ex)
         {
@@ -84,7 +84,7 @@ public class RolesController : ApiControllerBase
             
             var result = await _rolesService.UpdateRole(dto);
             if (result.IsSuccess) return Ok(result);
-            else return base.GetErrorActionResult(result.Error);
+            else return base.HandleError(result.Error);
         }
         catch (Exception ex)
         {
@@ -100,7 +100,7 @@ public class RolesController : ApiControllerBase
         {
             var result = await _rolesService.DeleteRole(id);
             if (result.IsSuccess) return Ok(result);
-            else return base.GetErrorActionResult(result.Error);
+            else return base.HandleError(result.Error);
         }
         catch (Exception ex)
         {

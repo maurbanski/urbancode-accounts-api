@@ -5,7 +5,14 @@ namespace Urbancode.Accounts.API.Interface.Controllers;
 
 public class ApiControllerBase : ControllerBase
 {
-    public IActionResult GetErrorActionResult(Error error)
+    private readonly ILogger _logger;
+    
+    public ApiControllerBase(ILogger logger)
+    {
+        _logger = logger;
+    }
+    
+    public IActionResult HandleError(Error error)
     {
         return error.Type switch
         {

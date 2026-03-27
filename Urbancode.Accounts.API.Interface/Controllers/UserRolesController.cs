@@ -24,7 +24,7 @@ public class UserRolesController : ApiControllerBase
         {
             var userRolesResult = await _userRolesService.GetUserRoles(id);
             if (userRolesResult.IsSuccess) return Ok(userRolesResult.Value);
-            else return base.GetErrorActionResult(userRolesResult.Error);
+            else return base.HandleError(userRolesResult.Error);
         }
         catch (Exception ex)
         {

@@ -25,7 +25,7 @@ public class UsersController : ApiControllerBase
         {
             var usersResult = await _usersService.GetUsers();
             if (usersResult.IsSuccess) return Ok(usersResult.Value);
-            else return base.GetErrorActionResult(usersResult.Error);
+            else return base.HandleError(usersResult.Error);
         }
         catch (Exception ex)
         {
@@ -41,7 +41,7 @@ public class UsersController : ApiControllerBase
         {
             var userResult = await _usersService.GetUser(id);
             if (userResult.IsSuccess) return Ok(userResult.Value);
-            else return base.GetErrorActionResult(userResult.Error);
+            else return base.HandleError(userResult.Error);
         }
         catch (Exception ex)
         {
@@ -57,7 +57,7 @@ public class UsersController : ApiControllerBase
         {
             var userResult = await _usersService.GetUser(email);
             if (userResult.IsSuccess) return Ok(userResult.Value);
-            else return base.GetErrorActionResult(userResult.Error);
+            else return base.HandleError(userResult.Error);
         }
         catch (Exception ex)
         {
@@ -80,7 +80,7 @@ public class UsersController : ApiControllerBase
 
             var result = await _usersService.CreateUser(dto);
             if (result.IsSuccess) return Ok();
-            else return base.GetErrorActionResult(result.Error);
+            else return base.HandleError(result.Error);
         }
         catch (Exception ex)
         {
@@ -104,7 +104,7 @@ public class UsersController : ApiControllerBase
 
             var result = await _usersService.UpdateUser(dto);
             if (result.IsSuccess) return Ok();
-            else return base.GetErrorActionResult(result.Error);
+            else return base.HandleError(result.Error);
         }
         catch (Exception ex)
         {
@@ -120,7 +120,7 @@ public class UsersController : ApiControllerBase
         {
             var userResult = await _usersService.DeleteUser(id);
             if (userResult.IsSuccess) return Ok();
-            else return base.GetErrorActionResult(userResult.Error);
+            else return base.HandleError(userResult.Error);
         }
         catch (Exception ex)
         {
