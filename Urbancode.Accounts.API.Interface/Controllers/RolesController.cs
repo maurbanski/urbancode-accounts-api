@@ -12,7 +12,7 @@ public class RolesController : ApiControllerBase
     private readonly ILogger<RolesController> _logger;
     private readonly RolesService _rolesService;
     
-    public RolesController(ILogger<RolesController> logger, RolesService rolesService)
+    public RolesController(ILogger<RolesController> logger, RolesService rolesService) : base(logger)
     {
         _logger = logger;
         _rolesService = rolesService;

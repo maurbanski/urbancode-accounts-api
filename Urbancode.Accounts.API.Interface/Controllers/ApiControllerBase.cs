@@ -14,6 +14,8 @@ public class ApiControllerBase : ControllerBase
     
     public IActionResult HandleError(Error error)
     {
+        _logger.LogError(error.MessageLong);
+        
         return error.Type switch
         {
             ErrorType.NotFound => NotFound(error.MessageShort),

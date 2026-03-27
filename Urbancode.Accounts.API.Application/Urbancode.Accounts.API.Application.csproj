@@ -5,6 +5,7 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <RootNamespace>Urbancode.Accounts.API.Logic</RootNamespace>
+        <UserSecretsId>cf59de6d-8b57-4651-a4f5-cf3406ce2878</UserSecretsId>
     </PropertyGroup>
 
     <ItemGroup>

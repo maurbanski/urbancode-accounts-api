@@ -11,7 +11,7 @@ public class UserRolesController : ApiControllerBase
     private readonly ILogger<UserRolesController> _logger;
     private readonly UserRolesService _userRolesService;
     
-    public UserRolesController(ILogger<UserRolesController> logger, UserRolesService userRolesService)
+    public UserRolesController(ILogger<UserRolesController> logger, UserRolesService userRolesService) : base(logger)
     {
         _logger = logger;
         _userRolesService = userRolesService;

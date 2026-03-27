@@ -10,7 +10,7 @@ public class RoleMembersController : ApiControllerBase
     private readonly ILogger<RoleMembersController> _logger;
     private readonly RoleMembersService _roleMembersService;
     
-    public RoleMembersController(ILogger<RoleMembersController> logger, RoleMembersService roleMembersService)
+    public RoleMembersController(ILogger<RoleMembersController> logger, RoleMembersService roleMembersService) : base(logger)
     {
         _logger = logger;
         _roleMembersService = roleMembersService;

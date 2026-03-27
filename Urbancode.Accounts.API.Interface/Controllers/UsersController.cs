@@ -12,7 +12,7 @@ public class UsersController : ApiControllerBase
     private readonly ILogger<UsersController> _logger;
     private readonly UsersService _usersService;
     
-    public UsersController(ILogger<UsersController> logger, UsersService usersService)
+    public UsersController(ILogger<UsersController> logger, UsersService usersService) : base(logger)
     {
         _logger = logger;
         _usersService = usersService;
