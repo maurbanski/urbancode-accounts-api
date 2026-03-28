@@ -19,6 +19,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Urbancode.Accounts.API.Application\Urbancode.Accounts.API.Application.csproj" />
+      <ProjectReference Include="..\Urbancode.Accounts.API.Infrastructure\Urbancode.Accounts.API.Infrastructure.csproj" />
     </ItemGroup>
 
 </Project>
