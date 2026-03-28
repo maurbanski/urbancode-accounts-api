@@ -17,7 +17,7 @@ public class UserRolesRepository : IUserRolesRepository
     
     public async Task<IList<Role>> GetUserRoles(Guid id)
     {
-        var query = "SELECT * FROM roles r INNER JOIN role_membership rm ON rm.user_id = @id AND rm.role_id = r.id";
+        var query = "SELECT r.* FROM roles r INNER JOIN role_membership rm ON rm.user_id = @id AND rm.role_id = r.id";
 
         using (var connection = _accountsDBContext.Connection)
         {

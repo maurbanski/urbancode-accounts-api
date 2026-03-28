@@ -9,10 +9,14 @@ namespace Urbancode.Accounts.API.Logic.Services;
 public class UsersService
 {
     private readonly IUsersRepository _usersRepository;
+    private readonly IUserRolesRepository _userRolesRepository;
+    private readonly IRoleMembersRepository _roleMembersRepository;
      
-    public UsersService(IUsersRepository usersRepository)
+    public UsersService(IUsersRepository usersRepository, IUserRolesRepository userRolesRepository, IRoleMembersRepository roleMembersRepository)
     {
         _usersRepository = usersRepository;
+        _userRolesRepository = userRolesRepository;
+        _roleMembersRepository = roleMembersRepository;
     }
 
     public async Task<Result<IList<User>>> GetUsers()
@@ -49,6 +53,7 @@ public class UsersService
         
         var user = new User
         {
+            Id = dto.Id,
             Name = dto.Name,
             Email = dto.Email,
             Active = true,
@@ -71,6 +76,7 @@ public class UsersService
         var user = new User
         {
             Id = dto.Id,
+            Email = dto.Email,
             Name = dto.Name,
             Active = dto.Active
         };
@@ -83,6 +89,12 @@ public class UsersService
     {
         var existingUser = await _usersRepository.GetUser(id);
         if (existingUser == null) return CommonErrors.UserNotFoundError(id);
+
+        var userRoles = await _userRolesRepository.GetUserRoles(id);
+        foreach (var role in userRoles)
+        {
+            await _roleMembersRepository.RemoveRoleMember(role.Id, id);
+        }
 
         await _usersRepository.DeleteUser(id);
         return Result.Success();

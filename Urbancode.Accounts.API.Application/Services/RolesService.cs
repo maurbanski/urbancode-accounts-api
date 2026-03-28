@@ -9,10 +9,12 @@ namespace Urbancode.Accounts.API.Logic.Services;
 public class RolesService
 {
     private readonly IRolesRepository _rolesRepository;
+    private readonly IRoleMembersRepository _roleMembersRepository;
     
-    public RolesService(IRolesRepository rolesRepository)
+    public RolesService(IRolesRepository rolesRepository, IRoleMembersRepository roleMembersRepository)
     {
         _rolesRepository = rolesRepository;
+        _roleMembersRepository = roleMembersRepository;
     }
 
     public async Task<Result<IList<Role>>> GetRoles()
@@ -61,7 +63,7 @@ public class RolesService
         
         var existingRole = await _rolesRepository.GetRole(dto.Id);
         if (existingRole == null) return CommonErrors.RoleNotFoundError(dto.Id);
-        if (!(await CheckRoleNameAvailable(dto.Name))) return CommonErrors.RoleAlreadyExistsError(dto.Name);
+        if (dto.Name != existingRole.Value.Name && !(await CheckRoleNameAvailable(dto.Name))) return CommonErrors.RoleAlreadyExistsError(dto.Name);
 
         var role = new Role
         {
@@ -78,6 +80,12 @@ public class RolesService
     {
         var existingRole = await _rolesRepository.GetRole(id);
         if (existingRole == null) return CommonErrors.RoleNotFoundError(id);
+
+        var roleMembers = await _roleMembersRepository.GetRoleMembers(id);
+        foreach (var member in roleMembers)
+        {
+            await _roleMembersRepository.RemoveRoleMember(id, member.Id);
+        }
 
         await _rolesRepository.DeleteRole(id);
         return Result.Success();

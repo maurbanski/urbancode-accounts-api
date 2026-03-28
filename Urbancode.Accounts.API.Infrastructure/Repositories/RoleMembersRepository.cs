@@ -17,7 +17,7 @@ public class RoleMembersRepository : IRoleMembersRepository
     
     public async Task<IList<User>> GetRoleMembers(Guid roleId)
     {
-        var query = "SELECT * FROM users u INNER JOIN role_membership rm ON rm.role_id = @roleId AND rm.user_id = u.id";
+        var query = "SELECT u.* FROM users u INNER JOIN role_membership rm ON rm.role_id = @role_id AND rm.user_id = u.id";
 
         using (var connection = _accountsDBContext.Connection)
         {
@@ -28,11 +28,17 @@ public class RoleMembersRepository : IRoleMembersRepository
 
     public async Task AddRoleMember(Guid roleId, Guid userId)
     {
-        var query = "INSERT INTO role_membership (role_id, user_id) VALUES (@role_id, @user_id)";
+        var query = "INSERT INTO role_membership (role_id, user_id, date_added) VALUES (@role_id, @user_id, @date_added)";
+        var parameters = new
+        {
+            role_id = roleId,
+            user_id = userId,
+            date_added = DateTime.UtcNow
+        };
 
         using (var connection = _accountsDBContext.Connection)
         {
-            await connection.QueryAsync(query, new { role_id = roleId, user_id = userId});
+            await connection.QueryAsync(query, parameters);
         }    
     }
 

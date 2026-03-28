@@ -54,7 +54,7 @@ public class RoleMembersController : ApiControllerBase
         try
         {
             var result = await _roleMembersService.AddRoleMember(id, userId);
-            if (result.IsSuccess) return Ok(result);
+            if (result.IsSuccess) return Ok();
             else return base.HandleError(result.Error);
         }
         catch (Exception ex)
@@ -70,7 +70,7 @@ public class RoleMembersController : ApiControllerBase
         try
         {
             var result = await _roleMembersService.RemoveRoleMember(id, userId);
-            if (result.IsSuccess) return Ok(result);
+            if (result.IsSuccess) return Ok();
             else return base.HandleError(result.Error);
         }
         catch (Exception ex)

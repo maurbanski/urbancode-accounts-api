@@ -83,7 +83,7 @@ public class RolesController : ApiControllerBase
             };
             
             var result = await _rolesService.UpdateRole(dto);
-            if (result.IsSuccess) return Ok(result);
+            if (result.IsSuccess) return Ok();
             else return base.HandleError(result.Error);
         }
         catch (Exception ex)
@@ -99,7 +99,7 @@ public class RolesController : ApiControllerBase
         try
         {
             var result = await _rolesService.DeleteRole(id);
-            if (result.IsSuccess) return Ok(result);
+            if (result.IsSuccess) return Ok();
             else return base.HandleError(result.Error);
         }
         catch (Exception ex)

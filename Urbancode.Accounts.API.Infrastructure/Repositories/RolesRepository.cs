@@ -61,7 +61,7 @@ public class RolesRepository : IRolesRepository
 
     public async Task UpdateRole(Role role)
     {
-        var query = "UPDATE roles SET name = @name, active = @active, date_created = @date_created WHERE id = @id";
+        var query = "UPDATE roles SET name = @name, active = @active WHERE id = @id";
 
         using (var connection = _accountsDBContext.Connection)
         {
