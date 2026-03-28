@@ -1,6 +1,6 @@
 namespace Urbancode.Accounts.API.Domain;
 
-public class User
+public record struct User
 {
     public Guid Id { get; set; }
     public string Email { get; set; }
