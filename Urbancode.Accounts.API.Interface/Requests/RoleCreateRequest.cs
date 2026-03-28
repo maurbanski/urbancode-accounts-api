@@ -1,6 +1,6 @@
 namespace Urbancode.Accounts.API.Interface.Requests;
 
-public class RoleCreateRequest
+public record RoleCreateRequest
 {
     public string Name { get; set; }
 }

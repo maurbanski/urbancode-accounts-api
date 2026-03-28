@@ -1,6 +1,6 @@
 namespace Urbancode.Accounts.API.Interface.Requests;
 
-public class RoleUpdateRequest
+public record RoleUpdateRequest
 {
     public string Name { get; set; }
 }

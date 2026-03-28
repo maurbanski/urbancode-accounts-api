@@ -2,7 +2,7 @@ using Urbancode.Accounts.API.Domain;
 
 namespace Urbancode.Accounts.API.Infrastructure.Entities;
 
-public record struct UserEntity
+public record UserEntity
 {
     public Guid id { get; set; }
     public string email { get; set; }

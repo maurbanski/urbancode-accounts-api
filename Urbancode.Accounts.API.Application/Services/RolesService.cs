@@ -76,7 +76,7 @@ public class RolesService
 
     public async Task<Result> DeleteRole(Guid id)
     {
-        var existingRole = await GetRole(id);
+        var existingRole = await _rolesRepository.GetRole(id);
         if (existingRole == null) return CommonErrors.RoleNotFoundError(id);
 
         await _rolesRepository.DeleteRole(id);

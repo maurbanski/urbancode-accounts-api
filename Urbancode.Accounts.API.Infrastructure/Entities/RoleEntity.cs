@@ -1,8 +1,9 @@
+using System.Runtime.CompilerServices;
 using Urbancode.Accounts.API.Domain;
 
 namespace Urbancode.Accounts.API.Infrastructure.Entities;
 
-public class RoleEntity
+public record RoleEntity
 {
     public Guid id { get; set; }
     public string name { get; set; }
@@ -17,13 +18,7 @@ public class RoleEntity
         this.date_created = date_created;
     }
 
-    public RoleEntity(Role role)
-    {
-        this.id = role.Id;
-        this.name = role.Name;
-        this.active = role.Active;
-        this.date_created = role.DateCreated;
-    }
+    public RoleEntity(Role role) : this(role.Id, role.Name, role.Active, role.DateCreated) { }
 
     public Role ToRole()
     {

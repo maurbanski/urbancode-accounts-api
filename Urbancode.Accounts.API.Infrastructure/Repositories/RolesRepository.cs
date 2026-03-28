@@ -32,8 +32,8 @@ public class RolesRepository : IRolesRepository
 
         using (var connection = _accountsDBContext.Connection)
         {
-            var entity = await connection.QuerySingleOrDefaultAsync(query, new {id});
-            return entity == null ? null : ((RoleEntity)entity).ToRole();
+            var entity = await connection.QuerySingleOrDefaultAsync<RoleEntity>(query, new {id});
+            return (entity == null) ? null : entity.ToRole();
         }
     }
 
@@ -43,14 +43,14 @@ public class RolesRepository : IRolesRepository
 
         using (var connection = _accountsDBContext.Connection)
         {
-            var entity = await connection.QuerySingleOrDefaultAsync(query, new {name});
-            return entity == null ? null : ((RoleEntity)entity).ToRole();
+            var entity = await connection.QuerySingleOrDefaultAsync<RoleEntity>(query, new {name});
+            return (entity == null) ? null : entity.ToRole();
         }
     }
 
     public async Task<Guid> CreateRole(Role role)
     {
-        var query = "INSERT INTO roles (id, name, active, date_created) VALUES (@id, @name, @active, @date_created) RETURNING id";
+        var query = "INSERT INTO roles (name, active, date_created) VALUES (@name, @active, @date_created) RETURNING id";
 
         using (var connection = _accountsDBContext.Connection)
         {

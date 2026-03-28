@@ -32,8 +32,8 @@ public class UsersRepository : IUsersRepository
 
         using (var connection = _accountsDBContext.Connection)
         {
-            var entity = await connection.QuerySingleOrDefaultAsync(query, new {id});
-            return entity == null ? null : ((UserEntity)entity).ToUser();
+            var entity = await connection.QuerySingleOrDefaultAsync<UserEntity?>(query, new {id});
+            return (entity == null) ? null : entity.ToUser();
         }
     }
     
@@ -43,8 +43,8 @@ public class UsersRepository : IUsersRepository
 
         using (var connection = _accountsDBContext.Connection)
         {
-            var entity = await connection.QuerySingleOrDefaultAsync(query, new {email});
-            return entity == null ? null : ((UserEntity)entity).ToUser();
+            var entity = await connection.QuerySingleOrDefaultAsync<UserEntity?>(query, new {email});
+            return (entity == null) ? null : entity.ToUser();
         }
     }
     

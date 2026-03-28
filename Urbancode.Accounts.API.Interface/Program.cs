@@ -1,6 +1,7 @@
 using NLog;
 using NLog.Extensions.Logging;
 using Urbancode.Accounts.API.Interface;
+using LogLevel = NLog.LogLevel;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +15,8 @@ AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 try
 {
     builder.AddInfrastructureServices();
+    builder.AddApplicationServices();
+    
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen();
     builder.Services.AddControllers();
@@ -26,9 +29,10 @@ try
         app.UseSwaggerUI();
     }
 
-    app.UseHttpsRedirection();
+    // app.UseHttpsRedirection();
 
     app.MapControllers();
+    logger.Log(NLog.LogLevel.Info, "API started");
 
     app.Run();
 }

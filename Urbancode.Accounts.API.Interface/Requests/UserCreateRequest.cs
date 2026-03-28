@@ -1,6 +1,6 @@
 namespace Urbancode.Accounts.API.Interface.Requests;
 
-public class UserCreateRequest
+public record UserCreateRequest
 {
     public Guid Id { get; set; }
     public string Email { get; set; }

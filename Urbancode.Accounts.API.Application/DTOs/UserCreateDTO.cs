@@ -1,6 +1,6 @@
 namespace Urbancode.Accounts.API.Logic.DTOs;
 
-public class UserCreateDTO
+public record UserCreateDTO
 {
     public Guid Id { get; set; }
     public string Email { get; set; }

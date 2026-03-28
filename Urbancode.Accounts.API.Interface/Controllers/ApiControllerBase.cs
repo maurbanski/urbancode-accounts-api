@@ -12,6 +12,7 @@ public class ApiControllerBase : ControllerBase
         _logger = logger;
     }
     
+    [NonAction]
     public IActionResult HandleError(Error error)
     {
         _logger.LogError(error.MessageLong);

@@ -66,7 +66,7 @@ public class UsersService
 
         var existingUser = await _usersRepository.GetUser(dto.Id);
         if (existingUser == null) return CommonErrors.UserNotFoundError(dto.Id);
-        if (dto.Email != existingUser.Email && !(await CheckEmailAvailable(dto.Email))) return CommonErrors.UserAlreadyExistsError(dto.Email);
+        if (dto.Email != existingUser.Value.Email && !(await CheckEmailAvailable(dto.Email))) return CommonErrors.UserAlreadyExistsError(dto.Email);
         
         var user = new User
         {
