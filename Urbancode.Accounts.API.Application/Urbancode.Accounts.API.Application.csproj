@@ -12,4 +12,10 @@
       <ProjectReference Include="..\Urbancode.Accounts.API.Domain\Urbancode.Accounts.API.Domain.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Reference Include="Microsoft.Extensions.Logging.Abstractions">
+        <HintPath>..\..\..\..\..\usr\lib64\dotnet\shared\Microsoft.AspNetCore.App\8.0.24\Microsoft.Extensions.Logging.Abstractions.dll</HintPath>
+      </Reference>
+    </ItemGroup>
+
 </Project>

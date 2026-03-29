@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 using Urbancode.Accounts.API.Domain;
 using Urbancode.Accounts.API.Domain.ErrorHandling;
 using Urbancode.Accounts.API.Logic.DTOs;
@@ -10,21 +11,25 @@ public class RolesService
 {
     private readonly IRolesRepository _rolesRepository;
     private readonly IRoleMembersRepository _roleMembersRepository;
+    private readonly ILogger<RolesService> _logger;
     
-    public RolesService(IRolesRepository rolesRepository, IRoleMembersRepository roleMembersRepository)
+    public RolesService(IRolesRepository rolesRepository, IRoleMembersRepository roleMembersRepository, ILogger<RolesService> logger)
     {
         _rolesRepository = rolesRepository;
         _roleMembersRepository = roleMembersRepository;
+        _logger = logger;
     }
 
     public async Task<Result<IList<Role>>> GetRoles()
     {
+        _logger.LogInformation($"Retrieving roles");
         var roles = await _rolesRepository.GetRoles();
         return new(roles);
     }
 
     public async Task<Result<Role>> GetRole(Guid id)
     {
+        _logger.LogInformation($"Retrieving role (Id: {id})");
         var role = await _rolesRepository.GetRole(id);
         if (role == null) return CommonErrors.RoleNotFoundError(id);
 
@@ -35,6 +40,7 @@ public class RolesService
     {
         if (!RoleNameValidator.ValidateRoleName(name)) return CommonErrors.InvalidRoleNameError(name);
         
+        _logger.LogInformation($"Retrieving role (Name: {name})");
         var role = await _rolesRepository.GetRole(name);
         if (role == null) return CommonErrors.RoleNotFoundError(name);
 
@@ -53,7 +59,9 @@ public class RolesService
             DateCreated = DateTime.UtcNow
         };
 
+        _logger.LogInformation($"Creating role (Name: {role.Name})");
         var id = await _rolesRepository.CreateRole(role);
+        _logger.LogInformation($"Role insertion returns Id (Id: {id})");
         return id;
     }
 
@@ -71,7 +79,8 @@ public class RolesService
             Name = dto.Name,
             Active = dto.Active
         };
-
+        
+        _logger.LogInformation($"Updating role (Id: {role.Id}, Name: {existingRole.Value.Name} -> {role.Name}, Active: {existingRole.Value.Active} -> {role.Active})");
         await _rolesRepository.UpdateRole(role);
         return Result.Success();
     }
@@ -81,12 +90,15 @@ public class RolesService
         var existingRole = await _rolesRepository.GetRole(id);
         if (existingRole == null) return CommonErrors.RoleNotFoundError(id);
 
+        _logger.LogInformation($"Deleting role members before role deletion (Id: {id})");
         var roleMembers = await _roleMembersRepository.GetRoleMembers(id);
         foreach (var member in roleMembers)
         {
+            _logger.LogInformation($"Removing user role (User Id: {member.Id}, Role Id: {id})");
             await _roleMembersRepository.RemoveRoleMember(id, member.Id);
         }
 
+        _logger.LogInformation($"Deleting role (Id: {id})");
         await _rolesRepository.DeleteRole(id);
         return Result.Success();
     }

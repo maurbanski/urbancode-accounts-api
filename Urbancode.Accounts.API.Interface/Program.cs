@@ -1,6 +1,7 @@
 using NLog;
 using NLog.Extensions.Logging;
 using Urbancode.Accounts.API.Interface;
+using Urbancode.Accounts.API.Interface.Middleware;
 using LogLevel = NLog.LogLevel;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,7 +17,8 @@ try
 {
     builder.AddInfrastructureServices();
     builder.AddApplicationServices();
-    
+
+    builder.Services.AddScoped<RequestLoggingMiddleware>();
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen();
     builder.Services.AddControllers();
@@ -30,10 +32,10 @@ try
     }
 
     // app.UseHttpsRedirection();
-
+    app.UseMiddleware<RequestLoggingMiddleware>();
     app.MapControllers();
-    logger.Log(NLog.LogLevel.Info, "API started");
-
+    
+    logger.Log(NLog.LogLevel.Info, "API starting");
     app.Run();
 }
 catch (Exception ex)

@@ -1,5 +1,4 @@
 using Urbancode.Accounts.API.Infrastructure.DBContexts;
-using Urbancode.Accounts.API.Infrastructure.Entities;
 using Urbancode.Accounts.API.Infrastructure.Repositories;
 using Urbancode.Accounts.API.Logic.Interfaces;
 using Urbancode.Accounts.API.Logic.Services;
